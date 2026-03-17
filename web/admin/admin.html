@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Admin Panel</title>
+
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script src="../firebase/firebase-config.js"></script>
+
+<script src="../security/device-check.js"></script>
+<script src="../security/network-check.js"></script>
+
+<script src="admin.js"></script>
+
+</head>
+
+<body style="display:none;">
+
+<h1>Admin Panel</h1>
+
+<h2>Create Employee</h2>
+
+<input id="email" placeholder="employee email"><br>
+<input id="password" placeholder="password"><br>
+<input id="role" placeholder="role (HR / ADMIN)"><br>
+
+<button onclick="createUser()">Create</button>
+
+<br><br>
+
+<button onclick="logout()">Logout</button>
+
+<script>
+
+// ⭐ Device Trust
+checkDeviceTrust()
+
+// ⭐ Network Trust
+checkNetworkTrust()
+
+// ⭐ กัน Back Cache
+window.addEventListener("pageshow", function(event){
+ if(event.persisted){
+  window.location.reload()
+ }
+})
+
+// ⭐ ตรวจ Session + Role
+firebase.auth().onAuthStateChanged(async function(user){
+
+ if(!user){
+  window.location="/index.html"
+  return
+ }
+
+ const doc = await db.collection("users").doc(user.uid).get()
+
+ if(!doc.exists){
+  window.location="/index.html"
+  return
+ }
+
+ const role = doc.data().role
+
+ if(role !== "ADMIN"){
+  alert("Access Denied")
+  window.location="/index.html"
+  return
+ }
+
+ // ⭐ ผ่านทุกเงื่อนไข
+ document.body.style.display="block"
+
+})
+
+function logout(){
+
+ firebase.auth().signOut().then(function(){
+
+  // ป้องกัน Back
+  window.location.replace("/index.html")
+
+ })
+
+}
+
+</script>
+
+</body>
+
+</html>

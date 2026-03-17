@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>HR Panel</title>
+
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script src="../firebase/firebase-config.js"></script>
+
+<script src="../security/device-check.js"></script>
+<script src="../security/network-check.js"></script>
+
+</head>
+
+<body style="display:none;">
+
+<h1>HR Panel</h1>
+
+<button onclick="logout()">Logout</button>
+
+<script>
+
+// ป้องกัน Back-Forward Cache
+window.addEventListener("pageshow", function(event){
+ if(event.persisted){
+  window.location.reload()
+ }
+})
+
+// ป้องกันการกด Back
+history.pushState(null,null,location.href)
+window.onpopstate=function(){
+ history.go(1)
+}
+
+// ตรวจสอบ device / network
+checkDeviceTrust()
+checkNetworkTrust()
+
+// ตรวจ Firebase Auth
+firebase.auth().onAuthStateChanged(async function(user){
+
+ if(!user){
+  window.location.replace("/index.html")
+  return
+ }
+
+ try{
+
+  const doc = await db.collection("users").doc(user.uid).get()
+
+  if(!doc.exists){
+   firebase.auth().signOut()
+   window.location.replace("/index.html")
+   return
+  }
+
+  if(doc.data().role !== "HR"){
+   alert("Access Denied")
+   firebase.auth().signOut()
+   window.location.replace("/index.html")
+   return
+  }
+
+  document.body.style.display="block"
+
+ }catch(e){
+
+  firebase.auth().signOut()
+  window.location.replace("/index.html")
+
+ }
+
+})
+
+function logout(){
+
+ sessionStorage.clear()
+ localStorage.clear()
+
+ firebase.auth().signOut().then(function(){
+
+  window.location.replace("/index.html")
+
+ })
+
+}
+
+</script>
+
+</body>
+
+</html>
+

@@ -1,0 +1,82 @@
+System Architecture
+================================
+User
+ |
+Internet
+ |
+pfSense Firewall
+ |
+Web Server (Docker)
+ |
+Security Layer
+ |-- Device Check
+ |-- SQL Injection Detect
+ |-- XSS Detect
+ |-- Brute Force Detect
+ |
+Multi-Factor Authentication (Firebase)
+ |
+Role Based Access
+ |
+MongoDB
+ |
+Grafana SOC Monitoring
+================================
+
+Url
+======================================
+http://localhost:8889/index.html
+http://localhost:8889/hr/hr.html
+http://localhost:8889/admin/admin.html
+======================================
+======================================
+1.Authentication (การยืนยันตัวตน)
+2.Role-Based Access Control (RBAC)
+3.Device Trust (Chrome Only)
+4. Network Verification (localhost Only)
+5. Role Protection (Page Protection) ()
+6. Direct URL Protection
+7. Cache Protection
+8. Brute Force Protection
+
+9.SQL Injection Detection
+	admin' OR '1'='1
+        1' OR '1'='1
+	1' AND '1'='1
+
+10.XSS (Cross-Site Scripting)
+
+ผ่านล็อกอิน
+	<script>alert(1)</script>
+	<img src=x onerror=alert(1)>
+	javascript:alert(1)
+ผ่าน URL
+	http://localhost:8889/index.html?msg=<img src=x onerror=alert(1)>
+	http://localhost:8889/index.html?test=<script>alert(1)</script>
+	http://localhost:8889/index.html?test=<svg onload=alert(1)>
+=======================================
+DB
+
+docker exec -it zerotrust-mongo mongosh
+show dbs
+use zerotrust
+db.logs.find().pretty()
+=======================================
+test
+
+http://localhost:3001/login
+http://localhost:3001/success
+http://localhost:3001/fail
+http://localhost:3001/attack
+http://localhost:3001/attack/sql
+http://localhost:3001/attack/xss
+http://localhost:3001/attack/brute
+========================================
+
+1 User login ผ่าน Web
+2 Firebase ตรวจสอบตัวตน
+3 Node server ตรวจจับ attack
+4 Logs ถูกบันทึกใน MongoDB
+5 Metrics ส่งไป Prometheus
+6 Grafana แสดง Security Dashboard
+
