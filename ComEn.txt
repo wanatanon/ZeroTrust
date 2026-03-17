@@ -6,21 +6,70 @@ Internet
  |
 pfSense Firewall
  |
-Web Server (Docker)
+Nginx Gateway (Reverse Proxy / Load Balancer)
  |
-Security Layer
- |-- Device Check
- |-- SQL Injection Detect
- |-- XSS Detect
- |-- Brute Force Detect
+Web Server (Docker Container - Node.js)
  |
-Multi-Factor Authentication (Firebase)
+Security Layer (Zero Trust)
+ ├ Network Check (IP / Geo / VPN)
+ ├ Device Check (Browser / OS)
+ ├ SQL Injection Protection
+ ├ XSS Protection
+ └ Brute Force Protection
  |
-Role Based Access
+Firebase Authentication (MFA / Email Verify)
  |
-MongoDB
+Role-Based Access Control (RBAC)
+ ├ HR
+ └ Admin
  |
-Grafana SOC Monitoring
+MongoDB Database
+ |
+Grafana Monitoring (SOC Dashboard)
+
+================================
+ZeroTrustProject/
+│
+├── gateway/
+│   └── nginx.conf              # Reverse Proxy / Gateway
+│
+├── image/                      # เก็บรูป / asset
+│
+├── MFA/                        # ระบบ Multi-Factor Authentication
+│
+├── monitoring/                 # Grafana / Prometheus / logs
+│
+├── server/                     # Backend (Node.js)
+│   ├── node_modules/
+│   ├── .env                    # เก็บ secret (ห้าม push)
+│   ├── package.json
+│   ├── package-lock.json
+│   └── server.js               # main server (API + Auth)
+│
+├── web/                        # Frontend
+│   ├── admin/
+│   │   ├── admin.html         # หน้า Admin
+│   │   └── admin.js
+│   │
+│   ├── firebase/              # config firebase client
+│   │
+│   ├── hr/
+│   │
+│   ├── security/              # Security Layer (Zero Trust)
+│   │   ├── bruteForce.js
+│   │   ├── device-check.js
+│   │   ├── network-check.js
+│   │   ├── sqlInjection.js
+│   │   └── xssProtection.js
+│   │
+│   ├── index.html             # หน้า login
+│   ├── login.js
+│   ├── otp.html               # MFA page
+│   └── otp.js
+│
+├── .gitignore                 # ignore secret files
+├── docker-compose.yml         # run system (nginx + server + monitoring)
+└── ComEnt.txt                 # เอกสาร / note
 ================================
 
 Url
@@ -64,6 +113,9 @@ db.logs.find().pretty()
 =======================================
 test
 
+http://localhost:3000/
+http://localhost:9090/targets
+http://localhost:4000/metrics
 http://localhost:3001/login
 http://localhost:3001/success
 http://localhost:3001/fail
@@ -72,6 +124,7 @@ http://localhost:3001/attack/sql
 http://localhost:3001/attack/xss
 http://localhost:3001/attack/brute
 ========================================
+npm install express nodemailer uuid
 
 1 User login ผ่าน Web
 2 Firebase ตรวจสอบตัวตน
