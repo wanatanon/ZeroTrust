@@ -1,13 +1,12 @@
 window.sendMetric = function(type){
-
  fetch("http://localhost:4000/" + type,{
   method:"GET",
-  mode:"cors"
+  mode:"cors",
+  keepalive:true   // 🔥 เพิ่ม (กัน metric หายตอน redirect)
  }).catch(()=>{})
-
 }
 
-function login(){
+async function login(){
 
  let email = document.getElementById("email").value
  let password = document.getElementById("password").value
@@ -30,54 +29,62 @@ function login(){
 
  // Brute Force
  if(checkBruteForce()){
- sendMetric("attack")
- sendMetric("attack/brute")
- return
-}
+  sendMetric("attack")
+  sendMetric("attack/brute")
+  return
+ }
 
  // login attempt
  sendMetric("login")
 
- // firebase auth
- auth.signInWithEmailAndPassword(email,password)
+ try{
 
- .then((userCredential)=>{
-
-  sendMetric("success")
+  const userCredential = await auth.signInWithEmailAndPassword(email,password)
 
   localStorage.removeItem("loginAttempts")
   localStorage.removeItem("lockTime")
 
-  let uid = userCredential.user.uid
+  const token = await userCredential.user.getIdToken()
+  const userEmail = userCredential.user.email
+  const uid = userCredential.user.uid
 
-  db.collection("users").doc(uid).get()
+  // ✅ เก็บ token
+  sessionStorage.setItem("firebase_token", token)
 
-  .then((doc)=>{
+  const doc = await db.collection("users").doc(uid).get()
+  const role = doc.data().role
 
-   let role = doc.data().role
+  sessionStorage.setItem("user_role", role)
+  sessionStorage.setItem("otp_email", userEmail)
 
-   sessionStorage.setItem("user_role", role)
-
-   if(role=="HR"){
-    window.location="hr/hr.html"
-   }
-
-   else if(role=="ADMIN"){
-    window.location="admin/admin.html"
-   }
-
+  // 🔥 ส่ง OTP (รอให้เสร็จจริง)
+  const res = await fetch("http://localhost:4000/send-otp", {
+   method:"POST",
+   headers:{ "Content-Type":"application/json" },
+   body: JSON.stringify({ token })
   })
 
- })
+  if(!res.ok){
+   throw new Error("OTP send failed")
+  }
 
- .catch((err)=>{
+  // 🔥 ตั้งเวลา OTP ครั้งแรก
+  const expire = Date.now() + 60000
+  sessionStorage.setItem("otp_expire", expire)
 
- sendMetric("fail")
+  // 🔥 delay นิด (กัน metric หาย)
+  setTimeout(()=>{
+   window.location = "otp.html"
+  },300)
 
- recordFailedAttempt()
+ }catch(err){
 
-})
+  console.log(err)
 
+  sendMetric("fail")
+
+  recordFailedAttempt()
+ }
 }
 
 
