@@ -3,6 +3,7 @@
 
 <head>
 
+<meta charset="UTF-8">
 <title>HR Panel</title>
 
 <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -18,85 +19,597 @@
 <script src="../security/device-check.js"></script>
 <script src="../security/network-check.js"></script>
 
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ===== BASE ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background: #060d1a;
+  color: #e2e8f0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  padding: 0 40px;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1e2d45;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navbar-logo {
+  width: 30px;
+  height: 30px;
+  background: #1d4ed8;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.5px;
+}
+
+.navbar-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f1f5f9;
+  letter-spacing: 0.3px;
+}
+
+.navbar-divider {
+  width: 1px;
+  height: 20px;
+  background: #1e2d45;
+}
+
+.navbar-sub {
+  font-size: 13px;
+  color: #475569;
+  font-weight: 400;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navbar-role {
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid #1e2d45;
+  color: #94a3b8;
+  padding: 7px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', Arial, sans-serif;
+  transition: all 0.2s;
+  letter-spacing: 0.2px;
+}
+
+.btn-logout:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: rgba(239,68,68,0.06);
+}
+
+/* ===== MAIN ===== */
+.main {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+}
+
+/* ===== PAGE HEADER ===== */
+.page-header {
+  margin-bottom: 36px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #1e2d45;
+}
+
+.page-header h1 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #f1f5f9;
+  letter-spacing: 0.2px;
+  margin-bottom: 4px;
+}
+
+.page-header p {
+  font-size: 13px;
+  color: #475569;
+  font-weight: 400;
+}
+
+/* ===== SECTION LABEL ===== */
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 16px;
+}
+
+/* ===== KPI GRID ===== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.kpi-card {
+  background: #0d1b2e;
+  border: 1px solid #1e2d45;
+  border-radius: 10px;
+  padding: 24px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent, #1d4ed8);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.kpi-card:hover::before {
+  opacity: 1;
+}
+
+.kpi-card:hover {
+  border-color: #2a3f5f;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.kpi-card.blue  { --accent: #3b82f6; }
+.kpi-card.green { --accent: #22c55e; }
+.kpi-card.amber { --accent: #f59e0b; }
+.kpi-card.slate { --accent: #94a3b8; }
+
+.kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 14px;
+}
+
+.kpi-value {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #f1f5f9;
+  margin-bottom: 8px;
+}
+
+.kpi-value.blue  { color: #3b82f6; }
+.kpi-value.green { color: #22c55e; }
+.kpi-value.amber { color: #f59e0b; }
+
+.kpi-meta {
+  font-size: 12px;
+  color: #334155;
+  font-weight: 400;
+}
+
+/* ===== TABLE SECTION ===== */
+.table-section {
+  margin-bottom: 40px;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.table-wrapper {
+  background: #0d1b2e;
+  border: 1px solid #1e2d45;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead tr {
+  background: #0a1628;
+  border-bottom: 1px solid #1e2d45;
+}
+
+thead th {
+  padding: 13px 20px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+tbody tr {
+  border-bottom: 1px solid #111e30;
+  transition: background 0.15s;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: #0f2040;
+}
+
+tbody td {
+  padding: 14px 20px;
+  font-size: 13.5px;
+  color: #cbd5e1;
+  vertical-align: middle;
+}
+
+.td-name {
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+.td-amount {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #e2e8f0;
+}
+
+.td-target {
+  color: #475569;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== PROGRESS ===== */
+.progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 4px;
+  background: #1e2d45;
+  border-radius: 99px;
+  overflow: hidden;
+  min-width: 80px;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+.fill-green { background: #22c55e; }
+.fill-amber { background: #f59e0b; }
+.fill-red   { background: #ef4444; }
+
+.progress-pct {
+  font-size: 12px;
+  font-weight: 600;
+  width: 36px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== BADGE ===== */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.badge-green {
+  background: rgba(34,197,94,0.1);
+  color: #22c55e;
+  border: 1px solid rgba(34,197,94,0.2);
+}
+
+.badge-amber {
+  background: rgba(245,158,11,0.1);
+  color: #f59e0b;
+  border: 1px solid rgba(245,158,11,0.2);
+}
+
+.badge-red {
+  background: rgba(239,68,68,0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239,68,68,0.2);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: #060d1a;
+  padding: 14px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid #1e2d45;
+  font-size: 12px;
+  color: #334155;
+  z-index: 999;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .main {
+    padding: 24px 16px 80px;
+  }
+  .navbar {
+    padding: 0 16px;
+  }
+  .footer {
+    padding: 14px 16px;
+  }
+}
+
+</style>
+
 </head>
 
 <body style="display:none;">
 
-<h1>HR Panel</h1>
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="navbar-left">
+    <div class="navbar-logo">HR</div>
+    <span class="navbar-title">Sales Dashboard</span>
+    <div class="navbar-divider"></div>
+    <span class="navbar-sub">Human Resources</span>
+  </div>
+  <div class="navbar-right">
+    <span class="navbar-role">HR Manager</span>
+    <button class="btn-logout" onclick="logout()">Sign Out</button>
+  </div>
+</div>
 
-<button onclick="logout()">Logout</button>
+<!-- MAIN -->
+<div class="main">
 
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <h1>Sales Overview</h1>
+    <p>Performance summary — updated in real time</p>
+  </div>
+
+  <!-- KPI -->
+  <div class="section-label">Key Performance Indicators</div>
+  <div class="kpi-grid">
+
+    <div class="kpi-card blue">
+      <div class="kpi-label">Today's Sales</div>
+      <div class="kpi-value blue">$1,250</div>
+      <div class="kpi-meta">As of today</div>
+    </div>
+
+    <div class="kpi-card slate">
+      <div class="kpi-label">Monthly Target</div>
+      <div class="kpi-value">$25,000</div>
+      <div class="kpi-meta">Current month</div>
+    </div>
+
+    <div class="kpi-card green">
+      <div class="kpi-label">Employees</div>
+      <div class="kpi-value green">12</div>
+      <div class="kpi-meta">Active members</div>
+    </div>
+
+    <div class="kpi-card amber">
+      <div class="kpi-label">Performance</div>
+      <div class="kpi-value amber">82%</div>
+      <div class="kpi-meta">Team average</div>
+    </div>
+
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-section">
+    <div class="table-header">
+      <div class="section-label" style="margin:0;">Sales Team</div>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Sales</th>
+            <th>Target</th>
+            <th>Progress</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr>
+            <td class="td-name">John</td>
+            <td class="td-amount">$5,000</td>
+            <td class="td-target">$7,000</td>
+            <td>
+              <div class="progress-wrap">
+                <div class="progress-bar">
+                  <div class="progress-fill fill-amber" style="width:71%"></div>
+                </div>
+                <span class="progress-pct" style="color:#f59e0b;">71%</span>
+              </div>
+            </td>
+            <td><span class="badge badge-amber">In Progress</span></td>
+          </tr>
+
+          <tr>
+            <td class="td-name">Anna</td>
+            <td class="td-amount">$8,000</td>
+            <td class="td-target">$7,000</td>
+            <td>
+              <div class="progress-wrap">
+                <div class="progress-bar">
+                  <div class="progress-fill fill-green" style="width:100%"></div>
+                </div>
+                <span class="progress-pct" style="color:#22c55e;">100%</span>
+              </div>
+            </td>
+            <td><span class="badge badge-green">Achieved</span></td>
+          </tr>
+
+          <tr>
+            <td class="td-name">Mike</td>
+            <td class="td-amount">$2,000</td>
+            <td class="td-target">$7,000</td>
+            <td>
+              <div class="progress-wrap">
+                <div class="progress-bar">
+                  <div class="progress-fill fill-red" style="width:28%"></div>
+                </div>
+                <span class="progress-pct" style="color:#ef4444;">28%</span>
+              </div>
+            </td>
+            <td><span class="badge badge-red">Low</span></td>
+          </tr>
+
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>HR Management System</span>
+  <span>© 2025 All rights reserved</span>
+</div>
+
+<!-- ✅ โค้ดเดิมไม่แตะ -->
 <script>
 
-// ป้องกัน Back-Forward Cache
 window.addEventListener("pageshow", function(event){
- if(event.persisted){
-  window.location.reload()
- }
+  if(event.persisted){
+    window.location.reload()
+  }
 })
 
-// ป้องกันการกด Back
 history.pushState(null,null,location.href)
 window.onpopstate=function(){
- history.go(1)
+  history.go(1)
 }
 
-// ตรวจสอบ device / network
 checkDeviceTrust()
 checkNetworkTrust()
 
-// ตรวจ Firebase Auth
 firebase.auth().onAuthStateChanged(async function(user){
 
- if(!user){
-  window.location.replace("/index.html")
-  return
- }
-
- try{
-
-  const doc = await db.collection("users").doc(user.uid).get()
-
-  if(!doc.exists){
-   firebase.auth().signOut()
-   window.location.replace("/index.html")
-   return
+  if(!user){
+    window.location.replace("/index.html")
+    return
   }
 
-  if(doc.data().role !== "HR"){
-   alert("Access Denied")
-   firebase.auth().signOut()
-   window.location.replace("/index.html")
-   return
+  try{
+
+    const doc = await db.collection("users").doc(user.uid).get()
+
+    if(!doc.exists){
+      firebase.auth().signOut()
+      window.location.replace("/index.html")
+      return
+    }
+
+    if(doc.data().role !== "HR"){
+      alert("Access Denied")
+      firebase.auth().signOut()
+      window.location.replace("/index.html")
+      return
+    }
+
+    document.body.style.display="block"
+
+  }catch(e){
+
+    firebase.auth().signOut()
+    window.location.replace("/index.html")
+
   }
-
-  document.body.style.display="block"
-
- }catch(e){
-
-  firebase.auth().signOut()
-  window.location.replace("/index.html")
-
- }
 
 })
 
 function logout(){
 
- sessionStorage.clear()
- localStorage.clear()
+  sessionStorage.clear()
+  localStorage.clear()
 
- firebase.auth().signOut().then(function(){
-
-  window.location.replace("/index.html")
-
- })
+  firebase.auth().signOut().then(function(){
+    window.location.replace("/index.html")
+  })
 
 }
 
 </script>
 
 </body>
-
 </html>
-

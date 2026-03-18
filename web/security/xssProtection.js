@@ -1,26 +1,8 @@
 function detectXSS(input){
 
- const patterns = [
-  "<script",
-  "</script>",
-  "javascript:",
-  "onerror",
-  "onload",
-  "<img",
-  "<svg",
-  "<iframe"
- ]
+ const pattern = /(<.*script.*>|javascript:|onerror|onload|<img|<svg|<iframe|alert\s*\()/i
 
- input = input.toLowerCase()
-
- for(let i=0;i<patterns.length;i++){
-  if(input.includes(patterns[i])){
-   return true
-  }
- }
-
- return false
-
+ return pattern.test(input)
 }
 
 function checkURLXSS(){
@@ -29,16 +11,26 @@ function checkURLXSS(){
 
  for(const value of params.values()){
 
-  if(detectXSS(value)){
+  let decoded = value
 
-   alert("XSS detected in URL")
+  try{
+   decoded = decodeURIComponent(value)
+  }catch(e){}
 
-   window.location="index.html"
+  console.log("CHECK:", decoded) // debug
 
-   return
+  if(detectXSS(decoded)){
 
-  }
+ alert("XSS detected in URL")
 
+ sendMetric("attack")
+ sendMetric("attack/xss")
+
+ setTimeout(()=>{
+  window.location = "index.html"
+ },300)
+
+ return
+}
  }
-
 }

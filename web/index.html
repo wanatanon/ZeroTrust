@@ -3,6 +3,11 @@
 
 <head>
 
+<meta charset="UTF-8">
+
+<link rel="stylesheet" href="layout.css">
+<script src="layout.js"></script>
+
 <title>Login</title>
 
 <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -27,18 +32,75 @@
 
 <body>
 
-<h1>Login</h1>
+<script>
+loadLayout()
+</script>
 
-<input id="email" placeholder="email"><br>
-<input id="password" type="password" placeholder="password"><br>
+<div class="login-container">
+  <div class="login-box">
 
-<button onclick="login()">Login</button>
+    <h1>Login</h1>
 
-<h3 id="countdown"></h3>
+    <!-- เพิ่ม input-group เพื่อให้มี label -->
+    <div class="input-group">
+      <label for="email">email</label>
+      <input id="email" type="email" placeholder="example@email.com">
+    </div>
+
+    <div class="input-group">
+      <label for="password">password</label>
+      <input id="password" type="password" placeholder="••••••••">
+    </div>
+
+    <button onclick="login()">login</button>
+
+    <h3 id="countdown"></h3>
+
+  </div>
+</div>
+
+<!-- 🔥 ย้าย function ขึ้นมาก่อน -->
+<script>
+
+function detectBrowser(){
+
+ const agent = navigator.userAgent
+
+ if(agent.includes("Edg")) return "Edge"
+ if(agent.includes("Chrome")) return "Chrome"
+ if(agent.includes("Firefox")) return "Firefox"
+ if(agent.includes("Safari")) return "Safari"
+
+ return "Unknown"
+}
+
+function sendDeviceLog(){
+
+ const browser = detectBrowser()
+
+ fetch("/device-log",{
+  method:"POST",
+  headers:{ "Content-Type":"application/json" },
+  body: JSON.stringify({
+   browser: browser,
+   time: new Date().toISOString()
+  }),
+  keepalive:true
+ }).catch(()=>{})
+
+}
+
+</script>
 
 <script>
 
-// Device Trust
+// 🔥 กันยิง log ซ้ำ
+if(!sessionStorage.getItem("device_logged")){
+ sendDeviceLog()
+ sessionStorage.setItem("device_logged","true")
+}
+
+// แล้วค่อย check
 checkDeviceTrust()
 
 // กัน Back Cache

@@ -3,6 +3,7 @@
 
 <head>
 
+<meta charset="UTF-8">
 <title>Admin Panel</title>
 
 <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
@@ -20,80 +21,853 @@
 
 <script src="admin.js"></script>
 
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ===== BASE ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background: #060d1a;
+  color: #e2e8f0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  background: rgba(13, 27, 46, 0.98);
+  backdrop-filter: blur(12px);
+  padding: 0 40px;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1e2d45;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.navbar-logo {
+  width: 32px;
+  height: 32px;
+  background: #7c3aed;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+.navbar-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.navbar-divider {
+  width: 1px;
+  height: 18px;
+  background: #1e2d45;
+}
+
+.navbar-sub {
+  font-size: 12px;
+  color: #475569;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.navbar-role {
+  font-size: 11px;
+  font-weight: 600;
+  color: #7c3aed;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: rgba(124,58,237,0.1);
+  border: 1px solid rgba(124,58,237,0.2);
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid #1e2d45;
+  color: #94a3b8;
+  padding: 7px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', Arial, sans-serif;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: rgba(239,68,68,0.06);
+}
+
+/* ===== LAYOUT ===== */
+.layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 60px);
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  background: #0a1628;
+  border-right: 1px solid #1e2d45;
+  padding: 28px 0;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+.sidebar-section {
+  padding: 0 16px;
+  margin-bottom: 28px;
+}
+
+.sidebar-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 0 8px;
+  margin-bottom: 8px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #475569;
+  transition: background 0.15s, color 0.15s;
+  margin-bottom: 2px;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+.sidebar-item:hover {
+  background: #0f2040;
+  color: #cbd5e1;
+}
+
+.sidebar-item.active {
+  background: rgba(124,58,237,0.12);
+  color: #a78bfa;
+  border: 1px solid rgba(124,58,237,0.15);
+}
+
+.sidebar-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+/* ===== MAIN ===== */
+.main {
+  padding: 36px 40px 80px;
+  overflow-y: auto;
+}
+
+/* ===== PAGE HEADER ===== */
+.page-header {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #1e2d45;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.page-header-left h1 {
+  font-size: 21px;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin-bottom: 4px;
+}
+
+.page-header-left p {
+  font-size: 13px;
+  color: #475569;
+}
+
+/* ===== SECTION LABEL ===== */
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  margin-bottom: 16px;
+}
+
+/* ===== STAT GRID ===== */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.stat-card {
+  background: #0d1b2e;
+  border: 1px solid #1e2d45;
+  border-radius: 10px;
+  padding: 22px 24px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent, #7c3aed);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.stat-card:hover::before { opacity: 1; }
+.stat-card:hover {
+  border-color: #2a3f5f;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.stat-card.purple { --accent: #7c3aed; }
+.stat-card.blue   { --accent: #3b82f6; }
+.stat-card.green  { --accent: #22c55e; }
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+  margin-bottom: 12px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+
+.stat-meta {
+  font-size: 12px;
+  color: #334155;
+}
+
+/* ===== TWO COLUMN ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 36px;
+  align-items: start;
+}
+
+/* ===== CREATE FORM ===== */
+.form-card {
+  background: #0d1b2e;
+  border: 1px solid #1e2d45;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.form-card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid #1e2d45;
+  background: #0a1628;
+}
+
+.form-card-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e2e8f0;
+  letter-spacing: 0.2px;
+}
+
+.form-card-header p {
+  font-size: 12px;
+  color: #475569;
+  margin-top: 3px;
+}
+
+.form-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+}
+
+.field-input {
+  width: 100%;
+  padding: 11px 14px;
+  background: #060d1a;
+  border: 1px solid #1e2d45;
+  border-radius: 7px;
+  color: #f1f5f9;
+  font-size: 13.5px;
+  font-family: 'Inter', Arial, sans-serif;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field-input::placeholder {
+  color: #334155;
+}
+
+.field-input:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+}
+
+.field-select {
+  width: 100%;
+  padding: 11px 14px;
+  background: #060d1a;
+  border: 1px solid #1e2d45;
+  border-radius: 7px;
+  color: #f1f5f9;
+  font-size: 13.5px;
+  font-family: 'Inter', Arial, sans-serif;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23475569' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.field-select:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+}
+
+.field-select option {
+  background: #0d1b2e;
+}
+
+.btn-create {
+  width: 100%;
+  padding: 12px;
+  background: #7c3aed;
+  border: none;
+  border-radius: 7px;
+  color: white;
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: 'Inter', Arial, sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  letter-spacing: 0.3px;
+  margin-top: 4px;
+}
+
+.btn-create:hover {
+  background: #6d28d9;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+}
+
+.btn-create:active {
+  transform: scale(0.98);
+}
+
+/* ===== USER TABLE ===== */
+.table-card {
+  background: #0d1b2e;
+  border: 1px solid #1e2d45;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table-card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid #1e2d45;
+  background: #0a1628;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-card-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.table-card-header p {
+  font-size: 12px;
+  color: #475569;
+  margin-top: 3px;
+}
+
+.btn-refresh {
+  background: transparent;
+  border: 1px solid #1e2d45;
+  color: #64748b;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Inter', Arial, sans-serif;
+  transition: all 0.2s;
+}
+
+.btn-refresh:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: rgba(59,130,246,0.05);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead tr {
+  background: #060d1a;
+  border-bottom: 1px solid #1e2d45;
+}
+
+thead th {
+  padding: 12px 20px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+tbody tr {
+  border-bottom: 1px solid #0f1f35;
+  transition: background 0.15s;
+}
+
+tbody tr:last-child { border-bottom: none; }
+
+tbody tr:hover { background: #0f2040; }
+
+tbody td {
+  padding: 13px 20px;
+  font-size: 13px;
+  color: #cbd5e1;
+  vertical-align: middle;
+}
+
+.td-email {
+  font-weight: 500;
+  color: #e2e8f0;
+  font-size: 13px;
+}
+
+.td-uid {
+  font-size: 11px;
+  color: #334155;
+  font-family: monospace;
+  letter-spacing: 0.3px;
+}
+
+/* ===== ROLE BADGE ===== */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.badge-admin  {
+  background: rgba(124,58,237,0.12);
+  color: #a78bfa;
+  border: 1px solid rgba(124,58,237,0.2);
+}
+
+.badge-hr {
+  background: rgba(59,130,246,0.12);
+  color: #60a5fa;
+  border: 1px solid rgba(59,130,246,0.2);
+}
+
+.badge-unknown {
+  background: rgba(71,85,105,0.2);
+  color: #64748b;
+  border: 1px solid #1e2d45;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  padding: 48px 20px;
+  text-align: center;
+  color: #334155;
+  font-size: 13px;
+}
+
+/* ===== LOADING ===== */
+.loading-row td {
+  padding: 32px 20px;
+  text-align: center;
+  color: #334155;
+  font-size: 13px;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: #060d1a;
+  padding: 14px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid #1e2d45;
+  font-size: 12px;
+  color: #334155;
+  z-index: 999;
+}
+
+</style>
+
 </head>
 
 <body style="display:none;">
 
-<h1>Admin Panel</h1>
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="navbar-left">
+    <div class="navbar-logo">AD</div>
+    <span class="navbar-title">Admin Console</span>
+    <div class="navbar-divider"></div>
+    <span class="navbar-sub">System Management</span>
+  </div>
+  <div class="navbar-right">
+    <span class="navbar-role">Administrator</span>
+    <button class="btn-logout" onclick="logout()">Sign Out</button>
+  </div>
+</div>
 
-<h2>Create Employee</h2>
+<!-- LAYOUT -->
+<div class="layout">
 
-<input id="email" placeholder="employee email"><br>
-<input id="password" placeholder="password"><br>
-<input id="role" placeholder="role (HR / ADMIN)"><br>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
 
-<button onclick="createUser()">Create</button>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Management</div>
+      <button class="sidebar-item active">
+        <span class="sidebar-dot"></span>
+        User Management
+      </button>
+      <button class="sidebar-item">
+        <span class="sidebar-dot"></span>
+        Access Control
+      </button>
+      <button class="sidebar-item">
+        <span class="sidebar-dot"></span>
+        Activity Log
+      </button>
+    </div>
 
-<br><br>
+    <div class="sidebar-section">
+      <div class="sidebar-label">System</div>
+      <button class="sidebar-item">
+        <span class="sidebar-dot"></span>
+        Configuration
+      </button>
+      <button class="sidebar-item">
+        <span class="sidebar-dot"></span>
+        Security
+      </button>
+    </div>
 
-<button onclick="logout()">Logout</button>
+  </div>
 
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>User Management</h1>
+        <p>Create and manage system accounts and access roles</p>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="section-label">Overview</div>
+    <div class="stat-grid">
+
+      <div class="stat-card purple">
+        <div class="stat-label">Total Users</div>
+        <div class="stat-value" id="stat-total">—</div>
+        <div class="stat-meta">Registered accounts</div>
+      </div>
+
+      <div class="stat-card blue">
+        <div class="stat-label">HR Accounts</div>
+        <div class="stat-value" id="stat-hr">—</div>
+        <div class="stat-meta">Human Resources</div>
+      </div>
+
+      <div class="stat-card green">
+        <div class="stat-label">Admin Accounts</div>
+        <div class="stat-value" id="stat-admin">—</div>
+        <div class="stat-meta">System Administrators</div>
+      </div>
+
+    </div>
+
+    <!-- TWO COL -->
+    <div class="two-col">
+
+      <!-- CREATE FORM -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <h3>Create Account</h3>
+          <p>Add a new employee or administrator account</p>
+        </div>
+        <div class="form-body">
+
+          <div class="field-group">
+            <label class="field-label">Email Address</label>
+            <input
+              class="field-input"
+              type="email"
+              id="email"
+              placeholder="employee@company.com"
+            >
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Password</label>
+            <input
+              class="field-input"
+              type="password"
+              id="password"
+              placeholder="Min. 8 characters"
+            >
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Role</label>
+            <select class="field-select" id="role">
+              <option value="" disabled selected>Select role</option>
+              <option value="HR">HR — Human Resources</option>
+              <option value="ADMIN">ADMIN — Administrator</option>
+            </select>
+          </div>
+
+          <button class="btn-create" onclick="createUser()">Create Account</button>
+
+        </div>
+      </div>
+
+      <!-- USER TABLE -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <div>
+            <h3>All Accounts</h3>
+            <p>Users registered in the system</p>
+          </div>
+          <button class="btn-refresh" onclick="loadUsers()">Refresh</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody id="user-table-body">
+            <tr class="loading-row">
+              <td colspan="2">Loading accounts...</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>Admin Console — System Management</span>
+  <span>&#169; 2025 All rights reserved</span>
+</div>
+
+<!-- ✅ โค้ดเดิมไม่แตะ -->
 <script>
 
-// ⭐ Device Trust
 checkDeviceTrust()
-
-// ⭐ Network Trust
 checkNetworkTrust()
 
-// ⭐ กัน Back Cache
 window.addEventListener("pageshow", function(event){
- if(event.persisted){
-  window.location.reload()
- }
+  if(event.persisted){
+    window.location.reload()
+  }
 })
 
-// ⭐ ตรวจ Session + Role
 firebase.auth().onAuthStateChanged(async function(user){
 
- if(!user){
-  window.location="/index.html"
-  return
- }
+  if(!user){
+    window.location="/index.html"
+    return
+  }
 
- const doc = await db.collection("users").doc(user.uid).get()
+  const doc = await db.collection("users").doc(user.uid).get()
 
- if(!doc.exists){
-  window.location="/index.html"
-  return
- }
+  if(!doc.exists){
+    window.location="/index.html"
+    return
+  }
 
- const role = doc.data().role
+  const role = doc.data().role
 
- if(role !== "ADMIN"){
-  alert("Access Denied")
-  window.location="/index.html"
-  return
- }
+  if(role !== "ADMIN"){
+    alert("Access Denied")
+    window.location="/index.html"
+    return
+  }
 
- // ⭐ ผ่านทุกเงื่อนไข
- document.body.style.display="block"
+  document.body.style.display="block"
+
+  // โหลด users หลัง auth ผ่าน
+  loadUsers()
 
 })
 
 function logout(){
+  firebase.auth().signOut().then(function(){
+    window.location.replace("/index.html")
+  })
+}
 
- firebase.auth().signOut().then(function(){
+// ===== โหลด Users จาก Firestore =====
+async function loadUsers(){
 
-  // ป้องกัน Back
-  window.location.replace("/index.html")
+  const tbody = document.getElementById("user-table-body")
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="2">Loading...</td></tr>'
 
- })
+  try{
+
+    const snapshot = await db.collection("users").get()
+
+    let total = 0
+    let hrCount = 0
+    let adminCount = 0
+    let rows = ""
+
+    snapshot.forEach(function(doc){
+
+      const data = doc.data()
+      const email = data.email || "—"
+      const role  = data.role  || "unknown"
+
+      total++
+      if(role === "HR")    hrCount++
+      if(role === "ADMIN") adminCount++
+
+      let badgeClass = "badge-unknown"
+      if(role === "ADMIN") badgeClass = "badge-admin"
+      if(role === "HR")    badgeClass = "badge-hr"
+
+      rows += `
+        <tr>
+          <td>
+            <div class="td-email">${email}</div>
+            <div class="td-uid">${doc.id}</div>
+          </td>
+          <td><span class="badge ${badgeClass}">${role}</span></td>
+        </tr>
+      `
+
+    })
+
+    // อัปเดต stat
+    document.getElementById("stat-total").textContent = total
+    document.getElementById("stat-hr").textContent    = hrCount
+    document.getElementById("stat-admin").textContent = adminCount
+
+    tbody.innerHTML = rows || '<tr class="loading-row"><td colspan="2">No accounts found</td></tr>'
+
+  }catch(e){
+
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="2">Failed to load accounts</td></tr>'
+
+  }
 
 }
 
 </script>
 
 </body>
-
 </html>

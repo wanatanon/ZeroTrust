@@ -1,24 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<title>OTP Verify</title>
+
 <meta http-equiv="Cache-Control" content="no-store" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 
-<!DOCTYPE html>
-<html>
-<head>
-  <title>OTP Verify</title>
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ===== BASE ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background: #060d1a;
+  color: #e2e8f0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== CARD ===== */
+.otp-card {
+  background: #0d1b2e;
+  border: 1px solid #1e2d45;
+  border-radius: 12px;
+  padding: 48px 44px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+}
+
+/* ===== HEADER ===== */
+.otp-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.otp-icon {
+  width: 52px;
+  height: 52px;
+  background: rgba(29,78,216,0.12);
+  border: 1px solid rgba(29,78,216,0.25);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 22px;
+}
+
+.otp-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #f1f5f9;
+  letter-spacing: 0.2px;
+  margin-bottom: 6px;
+}
+
+.otp-header p {
+  font-size: 13px;
+  color: #475569;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* ===== DIVIDER ===== */
+.divider {
+  height: 1px;
+  background: #1e2d45;
+  margin-bottom: 28px;
+}
+
+/* ===== LABEL ===== */
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 10px;
+}
+
+/* ===== INPUT ===== */
+.otp-input {
+  width: 100%;
+  padding: 13px 16px;
+  background: #060d1a;
+  border: 1px solid #1e2d45;
+  border-radius: 8px;
+  color: #f1f5f9;
+  font-size: 20px;
+  font-family: 'Inter', Arial, sans-serif;
+  font-weight: 600;
+  letter-spacing: 8px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  margin-bottom: 20px;
+}
+
+.otp-input::placeholder {
+  color: #1e2d45;
+  letter-spacing: 4px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.otp-input:focus {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(29,78,216,0.15);
+}
+
+/* ===== BUTTON VERIFY ===== */
+.btn-verify {
+  width: 100%;
+  padding: 13px;
+  background: #1d4ed8;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', Arial, sans-serif;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  margin-bottom: 14px;
+}
+
+.btn-verify:hover {
+  background: #1e40af;
+  box-shadow: 0 4px 20px rgba(29,78,216,0.4);
+}
+
+.btn-verify:active {
+  transform: scale(0.98);
+}
+
+/* ===== BUTTON RESEND ===== */
+.btn-resend {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid #1e2d45;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', Arial, sans-serif;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  margin-bottom: 20px;
+}
+
+.btn-resend:hover:not(:disabled) {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: rgba(59,130,246,0.05);
+}
+
+.btn-resend:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== TIMER ===== */
+.otp-timer {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #475569;
+  letter-spacing: 0.3px;
+  min-height: 18px;
+}
+
+.otp-timer.warning {
+  color: #ef4444;
+}
+
+/* ===== FOOTER ===== */
+.otp-footer {
+  text-align: center;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #1e2d45;
+  font-size: 12px;
+  color: #334155;
+}
+
+</style>
+
 </head>
+
 <body>
 
-<h2>Enter OTP</h2>
+<div class="otp-card">
 
-<input type="text" id="otp" placeholder="Enter OTP">
+  <!-- HEADER -->
+  <div class="otp-header">
+    <div class="otp-icon">&#128274;</div>
+    <h2>Verification Required</h2>
+    <p>Enter the one-time password sent to your registered contact</p>
+  </div>
 
-<button onclick="verifyOTP()">Verify</button>
+  <div class="divider"></div>
 
-<button id="resendBtn" onclick="resendOTP()">Resend OTP</button>
+  <!-- FIELD -->
+  <label class="field-label" for="otp">One-Time Password</label>
 
-<p id="otp-timer"></p>
+  <input
+    class="otp-input"
+    type="text"
+    id="otp"
+    placeholder="------"
+    maxlength="6"
+    autocomplete="one-time-code"
+  >
 
+  <!-- BUTTONS -->
+  <button class="btn-verify" onclick="verifyOTP()">Verify & Continue</button>
+
+  <button class="btn-resend" id="resendBtn" onclick="resendOTP()">Resend OTP</button>
+
+  <!-- TIMER -->
+  <p class="otp-timer" id="otp-timer"></p>
+
+  <!-- FOOTER -->
+  <div class="otp-footer">
+    Secure verification — do not share your OTP with anyone
+  </div>
+
+</div>
+
+<!-- ✅ โค้ดเดิมไม่แตะ -->
 <script src="otp.js"></script>
 
 </body>

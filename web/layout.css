@@ -1,0 +1,153 @@
+/* ===== BASE ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: #0f172a;
+  color: white;
+  min-height: 100vh;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  background: #1e293b;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #334155;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: #1e293b;
+  padding: 12px;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid #334155;
+  font-size: 13px;
+  color: #94a3b8;
+  z-index: 999;
+}
+
+/* ===== LOGIN CONTAINER ===== */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 120px);
+  padding: 20px;
+}
+
+/* ===== LOGIN BOX ===== */
+.login-box {
+  background: #1e293b;
+  padding: 48px 40px;
+  border-radius: 16px;
+  box-shadow:
+    0 0 0 1px #334155,
+    0 20px 60px rgba(0, 0, 0, 0.6);
+  text-align: center;
+  width: 100%;
+  max-width: 380px;
+}
+
+/* ===== หัวข้อ ===== */
+.login-box h1 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #f1f5f9;
+  letter-spacing: 0.5px;
+}
+
+/* ===== เส้นคั่นใต้หัวข้อ ===== */
+.login-box h1::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 3px;
+  background: #3b82f6;
+  border-radius: 2px;
+  margin: 10px auto 24px;
+}
+
+/* ===== INPUT GROUP ===== */
+.input-group {
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+/* ===== INPUT ===== */
+.login-box input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #0f172a;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.login-box input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.login-box input::placeholder {
+  color: #475569;
+}
+
+/* ===== BUTTON ===== */
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background: #3b82f6;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 8px;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+  letter-spacing: 0.4px;
+}
+
+.login-box button:hover {
+  background: #2563eb;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+}
+
+.login-box button:active {
+  transform: scale(0.98);
+}
+
+/* ===== COUNTDOWN ===== */
+.login-box h3 {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #ef4444;
+  font-weight: 500;
+  min-height: 20px;
+}

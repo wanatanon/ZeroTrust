@@ -11,7 +11,7 @@ function checkNetworkTrust(){
 
  const allowedHosts = [
   "localhost",
-  "192.168.1.100"   // ใส่ IP เครื่อง server จริง
+  "192.168.1.143"
  ]
 
  if(!allowedHosts.includes(host)){

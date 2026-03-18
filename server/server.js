@@ -213,14 +213,27 @@ app.post("/send-otp", async (req, res) => {
 
 
   // 🔥 log ลง Mongo (อยู่ใน async แล้ว)
-  await Log.create({
-   type:"MFA",
-   ip:req.ip,
-   device:"unknown",
-   browser:"unknown",
-   os:"unknown",
-   userAgent:req.headers["user-agent"],
-   status:"otp_sent"
+  let ip =
+ req.headers["x-forwarded-for"] ||
+ req.socket.remoteAddress||
+ req.ip
+
+if(ip === "::1"){
+ ip = "127.0.0.1"
+}
+
+ const ua = req.headers["user-agent"]
+
+ const info = parseUserAgent(ua)
+
+ await Log.create({
+    type:"MFA",
+    ip:ip,
+    device:info.device,
+    browser:info.browser,
+    os:info.os,
+    userAgent:ua,
+    status:"otp_sent"
   })
 
   res.send("OTP sent")
@@ -247,13 +260,26 @@ app.post("/verify-otp", async (req,res)=>{
 
     delete otpStore[email]
 
-    await Log.create({
+    let ip =
+ req.headers["x-forwarded-for"] ||
+ req.socket.remoteAddress||
+ req.ip
+
+if(ip === "::1"){
+ ip = "127.0.0.1"
+}
+
+ const ua = req.headers["user-agent"]
+
+ const info = parseUserAgent(ua)
+
+ await Log.create({
       type:"MFA",
-      ip:req.ip,
-      device:"unknown",
-      browser:"unknown",
-      os:"unknown",
-      userAgent:req.headers["user-agent"],
+      ip:ip,
+      device:info.device,
+      browser:info.browser,
+      os:info.os,
+      userAgent:ua,
       status:"success"
     })
 
@@ -494,6 +520,35 @@ if(ip === "::1"){
  res.send("brute force recorded")
 })
 
+app.post("/device-log", async (req,res)=>{
+
+ let ip =
+  req.headers["x-forwarded-for"] ||
+  req.socket.remoteAddress ||
+  req.ip
+
+ if(ip === "::1"){
+  ip = "127.0.0.1"
+ }
+
+ const ua = req.headers["user-agent"]
+
+ const info = parseUserAgent(ua)
+
+ await Log.create({
+
+  type:"device",
+  ip:ip,
+  device:info.device,
+  browser:info.browser,
+  os:info.os,
+  userAgent:ua,
+  status:"access"
+
+ })
+
+ res.send("device logged")
+})
 
 // ---------------- Prometheus ----------------
 
