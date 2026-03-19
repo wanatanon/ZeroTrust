@@ -1,31 +1,39 @@
 System Architecture
 ================================
-User
- |
-Internet
- |
-pfSense Firewall
- |
-Nginx Gateway (Reverse Proxy / Load Balancer)
- |
-Web Server (Docker Container - Node.js)
- |
-Security Layer (Zero Trust)
- ├ Network Check (IP / Geo / VPN)
- ├ Device Check (Browser / OS)
- ├ SQL Injection Protection
- ├ XSS Protection
+[ User / Browser ]
+        |
+        |  Internet
+        ↓
+[ Nginx Gateway (Reverse Proxy + Security) ]
+        |
+        |  (Rate Limit / XSS / SQLi / Bot Block)
+        ↓
+[ Web Frontend (Docker - login-web) ]
+        |
+        ↓
+[ Security Layer (Client-side JS) ]
+ ├ Device Check (Chrome only)
+ ├ Network Check
+ ├ XSS Detection
+ ├ SQL Injection Detection
  └ Brute Force Protection
- |
-Firebase Authentication (MFA / Email Verify)
- |
-Role-Based Access Control (RBAC)
- ├ HR
- └ Admin
- |
-MongoDB Database
- |
-Grafana Monitoring (SOC Dashboard)
+        |
+        ↓
+[ Firebase Authentication ]
+        |
+        | (MFA - OTP)
+        ↓
+[ Node.js Backend (zerotrust-web) ]
+        |
+ ├ OTP Service (Email)
+ ├ Logging API (/attack, /login, /device-log)
+ ├ Metrics (Prometheus)
+        |
+        ↓
+[ MongoDB ]
+        |
+        ↓
+[ Grafana Dashboard (SOC Monitoring) ]
 
 ================================
 ZeroTrustProject/
@@ -83,6 +91,7 @@ http://localhost:8889/admin/admin.html
 2.Role-Based Access Control (RBAC)
 3.Device Trust (Chrome Only)
 4. Network Verification (localhost Only)
+	http://127.0.0.2:8889/
 5. Role Protection (Page Protection) ()
 6. Direct URL Protection
 7. Cache Protection
@@ -124,12 +133,44 @@ http://localhost:3001/attack/sql
 http://localhost:3001/attack/xss
 http://localhost:3001/attack/brute
 ========================================
-npm install express nodemailer uuid
-
-1 User login ผ่าน Web
-2 Firebase ตรวจสอบตัวตน
-3 Node server ตรวจจับ attack
-4 Logs ถูกบันทึกใน MongoDB
-5 Metrics ส่งไป Prometheus
-6 Grafana แสดง Security Dashboard
-
+User เข้าเว็บ
+   ↓
+Nginx Gateway
+   ├ block attack (XSS / SQLi / bot)
+   └ forward request
+   ↓
+Frontend โหลดหน้า login
+   ↓
+Security Layer ทำงานทันที
+   ├ check device (Chrome?)
+   ├ check network
+   └ check URL XSS
+   ↓
+ส่ง log → /device-log → Backend → MongoDB
+   ↓
+User กรอก login
+   ↓
+ตรวจ:
+ ├ SQL Injection
+ ├ XSS
+ └ Brute Force
+   ↓
+(ถ้าผิด) → log attack → Grafana
+   ↓
+(ถ้าถูก) → Firebase Auth
+   ↓
+สร้าง OTP
+   ↓
+ส่ง email OTP
+   ↓
+User ใส่ OTP
+   ↓
+Backend ตรวจ OTP
+   ├ success → login success
+   └ fail → log fail
+   ↓
+เก็บ log ลง MongoDB
+   ↓
+Prometheus เก็บ metrics
+   ↓
+Grafana แสดงผล (SOC Dashboard)

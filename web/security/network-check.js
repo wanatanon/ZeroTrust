@@ -11,6 +11,7 @@ function checkNetworkTrust(){
 
  const allowedHosts = [
   "localhost",
+  "10.153.56.242",
   "192.168.1.143"
  ]
 
